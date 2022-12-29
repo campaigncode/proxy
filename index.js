@@ -1,5 +1,5 @@
 const express = require("express");
-const apicache = require("apicache");
+const cache = require("express-redis-cache")({ prefix: "proxy", expire: 10, host: process.env.REDISHOST, port: process.env.REDISPORT, auth_pass: process.env.REDISPASSWORD });
 const expressHttpProxy = require("express-http-proxy");
 const corsAnywhere = require("cors-anywhere");
 const morgan = require("morgan");
@@ -15,8 +15,7 @@ corsAnywhere.createServer({}).listen(CORS_PROXY_PORT, () => console.log(`Interna
 // Proxy to CORS server
 app.use(expressHttpProxy(`localhost:${CORS_PROXY_PORT}`));
 
-const FALLBACK_PORT = 8080;
-const APP_PORT = process.env.PORT || FALLBACK_PORT;
+const APP_PORT = process.env.PORT;
 app.listen(APP_PORT, () => {
   console.log(`External CORS cache server started at port ${APP_PORT}`);
 });
@@ -24,16 +23,5 @@ app.listen(APP_PORT, () => {
 // Logging the requests
 app.use(morgan("combined"));
 
-app.get("/*", cacheMiddleware());
-app.options("/*", cacheMiddleware());
-
-// Caching function
-function cacheMiddleware() {
-  const cacheOptions = {
-    statusCodes: { include: [200] },
-    defaultDuration: 60000,
-    appendKey: (req, res) => req.method,
-  };
-  let cacheMiddleware = apicache.options(cacheOptions).middleware();
-  return cacheMiddleware;
-}
+app.get("/*", cache.route());
+app.options("/*", cache.route());
