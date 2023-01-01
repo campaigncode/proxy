@@ -27,4 +27,6 @@ app.use(morgan("combined"));
 app.get("/s/*", cache.route(10));
 app.get("/m/*", cache.route(60));
 app.get("/l/*", cache.route(600));
-app.options("/*", cache.route());
+app.options("/s/*", cache.route(10));
+app.options("/m/*", cache.route(60));
+app.options("/l/*", cache.route(600));
