@@ -1,18 +1,25 @@
 require("dotenv").config();
 const express = require("express");
-const cache = require("express-redis-cache")({ prefix: "proxy", host: process.env.REDISHOST, port: process.env.REDISPORT, auth_pass: process.env.REDISPASSWORD });
+const apicache = require("apicache");
+const redis = require("redis");
 const proxy = require("express-http-proxy");
 const corsAnywhere = require("cors-anywhere");
 const morgan = require("morgan");
 
 // Creating express server
 const app = express();
+const redisClient = redis.createClient({
+  socket: {
+    host: process.env.REDISHOST,
+    port: process.env.REDISPORT,
+  },
+  password: process.env.REDISPASSWORD,
+});
+let cache = apicache.options({ redisClient: redisClient }).middleware;
 
 // Logging the requests
 app.use(morgan("combined"));
-cache.on("message", (message) => {
-  console.log(message);
-});
+redisClient.on("error", (err) => console.log(err));
 
 // Create CORS Anywhere server
 const CORS_PROXY_PORT = 5000;
@@ -20,12 +27,12 @@ corsAnywhere.createServer({}).listen(CORS_PROXY_PORT, () => console.log(`Interna
 
 // Use cache first
 // s, m, l define cache times
-app.get("/s/*", cache.route(10));
-app.get("/m/*", cache.route(60));
-app.get("/l/*", cache.route(600));
-app.options("/s/*", cache.route(10));
-app.options("/m/*", cache.route(60));
-app.options("/l/*", cache.route(600));
+app.get("/s/*", cache("10 seconds"));
+app.get("/m/*", cache("1 minute"));
+app.get("/l/*", cache("10 minutes"));
+app.options("/s/*", cache("10 seconds"));
+app.options("/m/*", cache("1 minute"));
+app.options("/l/*", cache("10 minutes"));
 
 // Else proxy to CORS server
 app.use(
