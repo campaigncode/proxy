@@ -1,5 +1,5 @@
 const express = require("express");
-const cache = require("express-redis-cache")({ prefix: "proxy", expire: 60, host: process.env.REDISHOST, port: process.env.REDISPORT, auth_pass: process.env.REDISPASSWORD });
+const cache = require("express-redis-cache")({ prefix: "proxy", host: process.env.REDISHOST, port: process.env.REDISPORT, auth_pass: process.env.REDISPASSWORD });
 const expressHttpProxy = require("express-http-proxy");
 const corsAnywhere = require("cors-anywhere");
 const morgan = require("morgan");
@@ -23,5 +23,8 @@ app.listen(APP_PORT, () => {
 // Logging the requests
 app.use(morgan("combined"));
 
-app.get("/*", cache.route());
+// s, m, l define cache times
+app.get("/s/*", cache.route(10));
+app.get("/m/*", cache.route(60));
+app.get("/l/*", cache.route(600));
 app.options("/*", cache.route());
