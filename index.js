@@ -28,11 +28,11 @@ corsAnywhere.createServer({}).listen(CORS_PROXY_PORT, () => console.log(`Interna
 // Use cache first
 // s, m, l define cache times
 app.get("/s/*", cache("10 seconds"));
-app.get("/m/*", cache("1 minute"));
-app.get("/l/*", cache("10 minutes"));
+app.get("/m/*", cache("10 minutes"));
+app.get("/l/*", cache("1 hour"));
 app.options("/s/*", cache("10 seconds"));
-app.options("/m/*", cache("1 minute"));
-app.options("/l/*", cache("10 minutes"));
+app.options("/m/*", cache("10 minutes"));
+app.options("/l/*", cache("1 hour"));
 
 // Else proxy to CORS server
 app.use(
