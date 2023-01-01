@@ -1,5 +1,5 @@
 const express = require("express");
-const cache = require("express-redis-cache")({ prefix: "proxy", expire: 10, host: process.env.REDISHOST, port: process.env.REDISPORT, auth_pass: process.env.REDISPASSWORD });
+const cache = require("express-redis-cache")({ prefix: "proxy", expire: 60, host: process.env.REDISHOST, port: process.env.REDISPORT, auth_pass: process.env.REDISPASSWORD });
 const expressHttpProxy = require("express-http-proxy");
 const corsAnywhere = require("cors-anywhere");
 const morgan = require("morgan");
