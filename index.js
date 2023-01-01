@@ -1,6 +1,6 @@
 const express = require("express");
 const cache = require("express-redis-cache")({ prefix: "proxy", host: process.env.REDISHOST, port: process.env.REDISPORT, auth_pass: process.env.REDISPASSWORD });
-const expressHttpProxy = require("express-http-proxy");
+const proxy = require("express-http-proxy");
 const corsAnywhere = require("cors-anywhere");
 const morgan = require("morgan");
 require("dotenv").config();
@@ -13,7 +13,13 @@ const CORS_PROXY_PORT = 5000;
 corsAnywhere.createServer({}).listen(CORS_PROXY_PORT, () => console.log(`Internal CORS Anywhere server started at port ${CORS_PROXY_PORT}`));
 
 // Proxy to CORS server
-app.use(expressHttpProxy(`localhost:${CORS_PROXY_PORT}`));
+app.use(
+  proxy(`localhost:${CORS_PROXY_PORT}`, {
+    proxyReqPathResolver: function (req) {
+      return req.url.slice(3);
+    },
+  })
+);
 
 const APP_PORT = process.env.PORT;
 app.listen(APP_PORT, () => {
