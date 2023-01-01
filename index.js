@@ -16,7 +16,7 @@ corsAnywhere.createServer({}).listen(CORS_PROXY_PORT, () => console.log(`Interna
 app.use(
   proxy(`localhost:${CORS_PROXY_PORT}`, {
     proxyReqPathResolver: function (req) {
-      return req.url.slice(3);
+      return req.url.slice(2);
     },
   })
 );
