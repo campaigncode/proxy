@@ -8,13 +8,7 @@ const morgan = require("morgan");
 
 // Creating express server
 const app = express();
-const redisClient = redis.createClient({
-  socket: {
-    host: process.env.REDISHOST,
-    port: process.env.REDISPORT,
-  },
-  password: process.env.REDISPASSWORD,
-});
+const redisClient = redis.createClient(process.env.REDIS_URL);
 let cache = apicache.options({ redisClient: redisClient }).middleware;
 
 // Logging the requests
@@ -27,12 +21,9 @@ corsAnywhere.createServer({}).listen(CORS_PROXY_PORT, () => console.log(`Interna
 
 // Use cache first
 // s, m, l define cache times
-app.get("/s/*", cache("10 seconds"));
-app.get("/m/*", cache("10 minutes"));
-app.get("/l/*", cache("1 hour"));
-app.options("/s/*", cache("10 seconds"));
-app.options("/m/*", cache("10 minutes"));
-app.options("/l/*", cache("1 hour"));
+app.use("/s/*", cache("10 seconds"));
+app.use("/m/*", cache("10 minutes"));
+app.use("/l/*", cache("1 hour"));
 
 // Else proxy to CORS server
 app.use(
