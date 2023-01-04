@@ -20,10 +20,11 @@ const CORS_PROXY_PORT = 5000;
 corsAnywhere.createServer({}).listen(CORS_PROXY_PORT, () => console.log(`Internal CORS Anywhere server started at port ${CORS_PROXY_PORT}`));
 
 // Use cache first
-// s, m, l define cache times
+// s, m, l, u define cache times
 app.use("/s/*", cache("10 seconds"));
 app.use("/m/*", cache("10 minutes"));
 app.use("/l/*", cache("1 hour"));
+app.use("/u/*", cache("12 months"));
 
 // Else proxy to CORS server
 app.use(
