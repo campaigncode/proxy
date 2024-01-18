@@ -10,7 +10,9 @@ import morgan from 'morgan';
 const app = express();
 
 // Creating redis client and wrapper (proxy uses some old methods)
-const redisClient = await createClient({ url: process.env.REDIS_URL }).on('error', console.error).connect();
+const redisClient = await createClient({ url: process.env.REDIS_URL, socket: { timeout: 30000 } })
+	.on('error', console.error)
+	.connect();
 const redisWrapper = {
 	...redisClient,
 	connected: redisClient.isOpen,
