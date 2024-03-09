@@ -1,10 +1,26 @@
 # Caching CORS Proxy
 
-A caching cors proxy for all APIs. To use the cache, use the `/cache/{time}` endpoint. Time must represent a URL encoded duration:
+A caching cors proxy for all APIs. To use the cache, use the `/cache/{time}` endpoint. Time must represent a valid duration.
 
--   `1%20minute` => 1 minute
--   `10%20hours` => 10 hours
+-   `1 minute`
+-   `2 hours`
+
+Allowed durations are:
+
+-   ms
+-   second(s)
+-   minute(s)
+-   hour(s)
+-   day(s)
+-   week(s)
+-   month(s)
 
 To avoid using the cache, simply use `/{YOUR URL}`.
 
 To bypass cache on a specific request, set `"x-apicache-bypass": true` in the request header.
+
+### Examples
+
+-   `https://CACHE PROXY URL/cache/10 minutes/https://URL TO BE CACHED/` will be cached for 10 minutes.
+-   `https://CACHE PROXY URL/cache/1 hour/https://URL TO BE CACHED/` will be cached for 1 hour.
+-   `https://CACHE PROXY URL/https://URL TO BE CACHED/` will not be cached.
