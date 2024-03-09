@@ -37,16 +37,15 @@ const CORS_PROXY_PORT = process.env.INTERNAL_PORT;
 createServer({}).listen(CORS_PROXY_PORT, () => console.log(`Internal CORS Anywhere server started at port ${CORS_PROXY_PORT}`));
 
 // Use cache first
-// s, m, l, u define cache times
-app.use('/proxy/s/*', cache('10 seconds'));
-app.use('/proxy/m/*', cache('10 minutes'));
-app.use('/proxy/l/*', cache('1 hour'));
-app.use('/proxy/u/*', cache('12 months'));
+app.use('/cache/:time/*', (req, res, next) => {
+	const time = decodeURIComponent(req.params.time);
+	return cache(time)(req, res, next);
+});
 
 // Else proxy to CORS server
 app.use(
 	proxy(`localhost:${CORS_PROXY_PORT}`, {
-		proxyReqPathResolver: (req) => req.url.slice('/proxy/?/'.length - 1)
+		proxyReqPathResolver: (req) => (req.params.time ? req.url.slice(`/cache/${req.params.time}/`.length) : req.url)
 	})
 );
 
