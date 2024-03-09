@@ -30,7 +30,9 @@ const redisWrapper = {
 const cache = apicache.options({ redisClient: redisWrapper }).middleware;
 
 // Logging the requests
-app.use(morgan('combined'));
+if (process.env.ENHANCED_LOGS == 'true') {
+	app.use(morgan('combined'));
+}
 
 // Create CORS Anywhere server
 const CORS_PROXY_PORT = process.env.INTERNAL_PORT;
