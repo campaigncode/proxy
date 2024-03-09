@@ -1,5 +1,7 @@
 # Caching CORS Proxy
 
+[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/template/VFbUtB?referralCode=eM55xc)
+
 A caching cors proxy for all APIs. To use the cache, use the `/cache/{time}` endpoint. Time must represent a valid duration.
 
 -   `1 minute`
