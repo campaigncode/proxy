@@ -35,7 +35,7 @@ if (process.env.ENHANCED_LOGS == 'true') {
 }
 
 // Create CORS Anywhere server
-const CORS_PROXY_PORT = process.env.INTERNAL_PORT;
+const CORS_PROXY_PORT = parseInt(process.env.PORT) + 1;
 createServer({}).listen(CORS_PROXY_PORT, () => console.log(`Internal CORS Anywhere server started at port ${CORS_PROXY_PORT}`));
 
 // Use cache first
